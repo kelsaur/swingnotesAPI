@@ -1,44 +1,46 @@
 const Note = require("../models/Note");
 
 //Get all notes
-exports.getNotes = async (req, res) => {
+exports.getNotes = async (req, res, next) => {
 	try {
 		const notes = await Note.find();
 		res.status(200).json(notes);
 	} catch (error) {
-		res.status(500).json({ error: error.message || "Server error" });
+		next(error);
 	}
 };
 
 //Save a new note
-exports.saveNote = async (req, res) => {
+exports.addNote = async (req, res, next) => {
 	try {
 		const newNote = new Note(req.body);
 
+		//runValidators runs automatically on .save()!
 		await newNote.save();
 		res.status(201).json(newNote);
 	} catch (error) {
-		res.status(400).json({ error: "Wrong request. Check res.body!" });
+		next(error);
 	}
 };
 
 //Update a note
-exports.updateNote = async (req, res) => {
+exports.updateNote = async (req, res, next) => {
 	const { noteId } = req.params;
 
 	try {
 		const updatedNote = await Note.findByIdAndUpdate(noteId, req.body, {
 			new: true,
+			runValidators: true,
 		});
 
 		res.status(200).json(updatedNote);
 	} catch (error) {
-		res.status(404).json({ error: "The note with this id doesn't exist!" });
+		next(error);
 	}
 };
 
 //Delete a note
-exports.deleteNote = async (req, res) => {
+exports.deleteNote = async (req, res, next) => {
 	const { noteId } = req.params;
 
 	try {
@@ -49,12 +51,12 @@ exports.deleteNote = async (req, res) => {
 			note: deletedNote.title,
 		});
 	} catch (error) {
-		res.status(400).json({ error: "Could not delete the note!" });
+		next(error);
 	}
 };
 
 //Search for a note by title
-exports.searchNoteByTitle = async (req, res) => {
+exports.searchNoteByTitle = async (req, res, next) => {
 	try {
 		const searchedNote = req.note; //from middleware
 
@@ -62,6 +64,6 @@ exports.searchNoteByTitle = async (req, res) => {
 			.status(200)
 			.json({ title: searchedNote.title, content: searchedNote.text });
 	} catch (error) {
-		res.status(404).json({ error: "Note with this title does not exist!" });
+		next(error);
 	}
 };

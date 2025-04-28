@@ -13,7 +13,7 @@ const {
 router
 	.route("/")
 	.get(noteController.getNotes)
-	.post(validateAddNote, noteController.saveNote);
+	.post(validateAddNote, noteController.addNote);
 
 router
 	.route("/:noteId")

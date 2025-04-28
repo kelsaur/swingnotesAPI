@@ -2,15 +2,15 @@ exports.validateAddNote = (req, res, next) => {
 	const { title, text } = req.body;
 
 	if (!title || !text) {
-		return res
-			.status(400)
-			.json({ message: "Missing note title and/or content!" });
+		const error = new Error("Missing note title and/or content!");
+		error.statusCode = 400;
+		return next(error);
 	}
 
 	if (typeof title !== "string" || typeof text !== "string") {
-		return res
-			.status(400)
-			.json({ message: "Title and/or content must be of type string" });
+		const error = new Error("Title and/or content must be of type string!");
+		error.statusCode = 400;
+		return next(error);
 	}
 
 	next();
@@ -23,9 +23,9 @@ exports.validateUpdateNote = (req, res, next) => {
 		(title && typeof title !== "string") ||
 		(text && typeof text !== "string")
 	) {
-		return res
-			.status(400)
-			.json({ message: "Title and/or content must be of type string!" });
+		const error = new Error("Title and/or content must be of type string!");
+		error.statusCode = 400;
+		return next(error);
 	}
 
 	next();
