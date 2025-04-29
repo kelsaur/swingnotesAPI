@@ -1,5 +1,10 @@
 const Note = require("../models/Note");
 
+//req.note
+//new... + .save() ---> .create()
+//.findByIdAndUpdate() ---> .set() + .save()
+//.findByIdAndDelete() ---> .removeOne()
+
 //Get all notes
 exports.getNotes = async (req, res, next) => {
 	try {
@@ -13,10 +18,7 @@ exports.getNotes = async (req, res, next) => {
 //Save a new note
 exports.addNote = async (req, res, next) => {
 	try {
-		const newNote = new Note(req.body);
-
-		//runValidators runs automatically on .save()!
-		await newNote.save();
+		const newNote = await Note.create(req.body);
 		res.status(201).json({ success: true, newNote });
 	} catch (error) {
 		next(error);
@@ -26,13 +28,10 @@ exports.addNote = async (req, res, next) => {
 //Update a note
 exports.updateNote = async (req, res, next) => {
 	try {
-		req.note.set(req.body); //from id check middleware; merge new values
-		const updatedNote = await req.note.save(); //runs validation since .save() is used
+		const updateNote = req.note;
 
-		// const updatedNote = await Note.findByIdAndUpdate(noteId, req.body, {
-		// 	new: true,
-		// 	runValidators: true,
-		// });
+		updateNote.set(req.body); //from id check middleware; merge new values
+		const updatedNote = await updateNote.save(); //runs validation since .save() is used
 
 		res.status(200).json({ success: true, updatedNote });
 	} catch (error) {
@@ -42,19 +41,17 @@ exports.updateNote = async (req, res, next) => {
 
 //Delete a note
 exports.deleteNote = async (req, res, next) => {
-	//const { noteId } = req.params;
-
 	try {
-		console.log("req.note type:", req.note.constructor.name);
+		const deletedNote = req.note;
 
-		await req.note.deleteOne();
+		//console.log("deletedNote type:", deletedNote.constructor.name);
 
-		//const deletedNote = await Note.findByIdAndDelete(noteId);
+		await deletedNote.deleteOne();
 
 		res.status(200).json({
 			success: true,
 			message: "Item deleted successfully!",
-			note: req.note.title,
+			note: deletedNote.title,
 		});
 	} catch (error) {
 		console.error("DELETE ERROR: ", error);

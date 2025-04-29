@@ -20,8 +20,6 @@ exports.validateNoteTitle = async (req, res, next) => {
 			const error = new Error("No such title exists!");
 			error.statusCode = 404;
 			return next(error);
-
-			return res.status(404).json({ message: "No such title exists!" });
 		}
 
 		req.note = searchedNote;

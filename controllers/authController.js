@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 //Register as new user
-exports.registerUser = async (req, res) => {
+exports.registerUser = async (req, res, next) => {
 	const { username, email, password } = req.body;
 	const saltRounds = 10;
 
@@ -18,14 +18,18 @@ exports.registerUser = async (req, res) => {
 			password: hashedPassword,
 		});
 
-		res.status(201).json({ message: "User registered successfully!" });
+		res.status(201).json({
+			success: true,
+			message: "User registered successfully!",
+			newUser,
+		});
 	} catch (error) {
-		res.status(500).json({ error: "Server error!" });
+		next(error);
 	}
 };
 
 //Log in
-exports.logIn = async (req, res) => {
+exports.logIn = async (req, res, next) => {
 	const user = req.user;
 
 	try {
@@ -35,6 +39,11 @@ exports.logIn = async (req, res) => {
 
 		res.status(200).json({ message: "Log in successful!", token: token });
 	} catch (error) {
-		res.status(500).json({ message: "Server error!" });
+		next(error);
 	}
+};
+
+//Get a list of all users
+exports.allUsers = async (req, res, next) => {
+	const users = req.user;
 };

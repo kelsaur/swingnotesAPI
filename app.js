@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const bcrypt = require("bcryptjs");
+const userRoutes = require("./routes/userRoutes");
 const noteRoutes = require("./routes/noteRoutes");
 const errorHandler = require("./middleware/errorHandler");
 
@@ -11,6 +12,7 @@ app.get("/", (req, res) => {
 });
 
 //Routes
+app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/notes", noteRoutes);
 app.use(errorHandler);
 
