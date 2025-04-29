@@ -25,13 +25,14 @@ exports.addNote = async (req, res, next) => {
 
 //Update a note
 exports.updateNote = async (req, res, next) => {
-	const { noteId } = req.params;
-
 	try {
-		const updatedNote = await Note.findByIdAndUpdate(noteId, req.body, {
-			new: true,
-			runValidators: true,
-		});
+		req.note.set(req.body); //from id check middleware; merge new values
+		const updatedNote = await req.note.save(); //runs validation since .save() is used
+
+		// const updatedNote = await Note.findByIdAndUpdate(noteId, req.body, {
+		// 	new: true,
+		// 	runValidators: true,
+		// });
 
 		res.status(200).json(updatedNote);
 	} catch (error) {
@@ -41,14 +42,16 @@ exports.updateNote = async (req, res, next) => {
 
 //Delete a note
 exports.deleteNote = async (req, res, next) => {
-	const { noteId } = req.params;
+	//const { noteId } = req.params;
 
 	try {
-		const deletedNote = await Note.findByIdAndDelete(noteId);
+		await req.note.remove();
+
+		//const deletedNote = await Note.findByIdAndDelete(noteId);
 
 		res.status(200).json({
 			message: "Item deleted successfully!",
-			note: deletedNote.title,
+			note: req.note.title,
 		});
 	} catch (error) {
 		next(error);
@@ -58,7 +61,7 @@ exports.deleteNote = async (req, res, next) => {
 //Search for a note by title
 exports.searchNoteByTitle = async (req, res, next) => {
 	try {
-		const searchedNote = req.note; //from middleware
+		const searchedNote = req.note; //stored in middleware
 
 		res
 			.status(200)

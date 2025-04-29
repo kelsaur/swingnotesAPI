@@ -1,19 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const noteController = require("../controllers/noteController");
-const {
-	validateAddNote,
-	validateUpdateNote,
-} = require("../middleware/notesMiddleware");
+const { validateUpdateNote } = require("../middleware/notesMiddleware");
 const { validateNoteId } = require("../middleware/noteIdMiddleware");
 const {
 	validateNoteTitle,
 } = require("../middleware/noteTitleSearchMiddleware");
 
-router
-	.route("/")
-	.get(noteController.getNotes)
-	.post(validateAddNote, noteController.addNote);
+router.route("/").get(noteController.getNotes).post(noteController.addNote);
 
 router
 	.route("/:noteId")
