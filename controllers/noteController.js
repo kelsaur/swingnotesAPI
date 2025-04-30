@@ -7,8 +7,10 @@ const Note = require("../models/Note");
 
 //Get all notes
 exports.getNotes = async (req, res, next) => {
+	const user = req.userId; //user from decoded token - verifyToken
+
 	try {
-		const notes = await Note.find();
+		const notes = await Note.find({ user: user });
 		res.status(200).json({ success: true, notes });
 	} catch (error) {
 		next(error);
@@ -17,8 +19,15 @@ exports.getNotes = async (req, res, next) => {
 
 //Save a new note
 exports.addNote = async (req, res, next) => {
+	const user = req.userId;
+
 	try {
-		const newNote = await Note.create(req.body);
+		const newNote = await Note.create({
+			title: req.body.title,
+			text: req.body.text,
+			user: user,
+		});
+
 		res.status(201).json({ success: true, newNote });
 	} catch (error) {
 		next(error);

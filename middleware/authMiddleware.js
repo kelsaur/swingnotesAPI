@@ -15,7 +15,7 @@ exports.verifyToken = (req, res, next) => {
 		//check if token is signed using the correct JWT key, has it expired?
 		const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-		//attach user's ID to the request, so the controller knows who is making the request
+		//attach user's ID (from logIn controller) to the request, so the notes controller knows who is making the request
 		req.userId = decoded.userId;
 
 		next();

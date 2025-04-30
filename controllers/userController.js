@@ -34,6 +34,8 @@ exports.logIn = async (req, res, next) => {
 
 	try {
 		//create payload: saves user id in the token -> sign it with server pw
+		//used later to access routes protected with token (/notes)
+		//token is stored locally
 		const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
 			expiresIn: "5h",
 		});
