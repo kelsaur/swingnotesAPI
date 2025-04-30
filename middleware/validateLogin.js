@@ -2,27 +2,24 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 
 exports.validateLogin = async (req, res, next) => {
-	const { username, password } = req.body;
+	const { username, email, password } = req.body;
 
-	if (!username || !password) {
-		const error = new Error("You need to provide username and/or password!");
+	if ((!username && !email) || !password) {
+		const error = new Error(
+			"You need to provide username or email and/or password!"
+		);
 		error.statusCode = 400;
 		return next(error);
-
-		return res
-			.status(400)
-			.json({ message: "You need to provide username and/or password!" });
 	}
 
 	try {
-		const user = await User.findOne({ username });
+		//is username provided ? if yes -> look for username, if no -> look for email
+		const user = await User.findOne(username ? { username } : { email });
 
 		if (!user) {
-			const error = new Error("Invalid username!");
+			const error = new Error("Invalid username or email!");
 			error.statusCode = 400;
 			return next(error);
-
-			return res.status(400).json({ message: "Invalid username!" });
 		}
 
 		const isMatch = await bcrypt.compare(password, user.password);
@@ -31,14 +28,13 @@ exports.validateLogin = async (req, res, next) => {
 			const error = new Error("Invalid password!");
 			error.statusCode = 400;
 			return next(error);
-
-			return res.status(400).json({ message: "Invalid password!" });
 		}
 
 		req.user = user;
 
 		next();
 	} catch (error) {
+		console.error("Login error: ", error);
 		error.statusCode = 500;
 		next(error);
 

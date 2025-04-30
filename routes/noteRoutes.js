@@ -6,16 +6,25 @@ const { validateNoteId } = require("../middleware/noteIdMiddleware");
 const {
 	validateNoteTitle,
 } = require("../middleware/noteTitleSearchMiddleware");
+const { verifyToken } = require("../middleware/authMiddleware");
 
-router.route("/").get(noteController.getNotes).post(noteController.addNote);
+router
+	.route("/")
+	.get(verifyToken, noteController.getNotes)
+	.post(verifyToken, noteController.addNote);
 
 router
 	.route("/:noteId")
-	.put(validateNoteId, validateUpdateNote, noteController.updateNote)
-	.delete(validateNoteId, noteController.deleteNote);
+	.put(
+		verifyToken,
+		validateNoteId,
+		validateUpdateNote,
+		noteController.updateNote
+	)
+	.delete(verifyToken, validateNoteId, noteController.deleteNote);
 
 router
 	.route("/search")
-	.post(validateNoteTitle, noteController.searchNoteByTitle);
+	.post(verifyToken, validateNoteTitle, noteController.searchNoteByTitle);
 
 module.exports = router;
