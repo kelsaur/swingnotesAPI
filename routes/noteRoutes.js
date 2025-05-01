@@ -1,6 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const noteController = require("../controllers/noteController");
+const {
+	getNotes,
+	addNote,
+	updateNote,
+	deleteNote,
+	searchNoteByTitle,
+} = require("../controllers/noteController");
 const { validateUpdateNote } = require("../middleware/notesMiddleware");
 const { validateNoteId } = require("../middleware/noteIdMiddleware");
 const {
@@ -8,23 +14,13 @@ const {
 } = require("../middleware/noteTitleSearchMiddleware");
 const { verifyToken } = require("../middleware/authMiddleware");
 
-router
-	.route("/")
-	.get(verifyToken, noteController.getNotes)
-	.post(verifyToken, noteController.addNote);
+router.route("/").get(verifyToken, getNotes).post(verifyToken, addNote);
 
 router
 	.route("/:noteId")
-	.put(
-		verifyToken,
-		validateNoteId,
-		validateUpdateNote,
-		noteController.updateNote
-	)
-	.delete(verifyToken, validateNoteId, noteController.deleteNote);
+	.put(verifyToken, validateNoteId, validateUpdateNote, updateNote)
+	.delete(verifyToken, validateNoteId, deleteNote);
 
-router
-	.route("/search")
-	.post(verifyToken, validateNoteTitle, noteController.searchNoteByTitle);
+router.route("/search").post(verifyToken, validateNoteTitle, searchNoteByTitle);
 
 module.exports = router;
