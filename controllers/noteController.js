@@ -7,7 +7,7 @@ const Note = require("../models/Note");
 
 //Get all notes
 exports.getNotes = async (req, res, next) => {
-	const user = req.userId; //user from payload token - verifyToken
+	const user = req.currentUser; //user from payload token - verifyToken
 
 	try {
 		const notes = await Note.find({ user: user });
@@ -19,7 +19,7 @@ exports.getNotes = async (req, res, next) => {
 
 //Save a new note
 exports.addNote = async (req, res, next) => {
-	const user = req.userId;
+	const user = req.currentUser;
 	const { title, text } = req.body;
 
 	try {

@@ -24,7 +24,7 @@ exports.verifyToken = (req, res, next) => {
 		const payload = jwt.verify(token, process.env.JWT_SECRET);
 
 		//attach user's ID (from logIn controller) to the request, so the notes controller knows who is making the request
-		req.userId = payload.userId;
+		req.currentUser = payload.userId;
 
 		next();
 	} catch (err) {
