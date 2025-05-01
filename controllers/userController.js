@@ -46,7 +46,7 @@ exports.logIn = async (req, res, next) => {
 			token: token,
 		});
 	} catch (error) {
-		console.error("Login error: ", error);
+		//console.error("Login error: ", error);
 		next(error);
 	}
 };

@@ -20,7 +20,6 @@ exports.validateRegister = async (req, res, next) => {
 		}
 		next();
 	} catch (error) {
-		error.statusCode = 500;
 		next(error);
 
 		//res.status(500).json({ message: "Server error!" });

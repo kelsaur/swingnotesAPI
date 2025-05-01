@@ -12,8 +12,8 @@ app.get("/", (req, res) => {
 });
 
 //Routes
-app.use("/api/v1/auth", userRoutes);
-app.use("/api/v1/notes", noteRoutes);
+app.use("/swingnotes/auth", userRoutes);
+app.use("/swingnotes/notes", noteRoutes);
 app.use(errorHandler);
 
 module.exports = app;

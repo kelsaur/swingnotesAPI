@@ -7,7 +7,7 @@ const Note = require("../models/Note");
 
 //Get all notes
 exports.getNotes = async (req, res, next) => {
-	const user = req.userId; //user from decoded token - verifyToken
+	const user = req.userId; //user from payload token - verifyToken
 
 	try {
 		const notes = await Note.find({ user: user });
@@ -20,11 +20,12 @@ exports.getNotes = async (req, res, next) => {
 //Save a new note
 exports.addNote = async (req, res, next) => {
 	const user = req.userId;
+	const { title, text } = req.body;
 
 	try {
 		const newNote = await Note.create({
-			title: req.body.title,
-			text: req.body.text,
+			title: title,
+			text: text,
 			user: user,
 		});
 
@@ -53,8 +54,6 @@ exports.deleteNote = async (req, res, next) => {
 	try {
 		const deletedNote = req.note;
 
-		//console.log("deletedNote type:", deletedNote.constructor.name);
-
 		await deletedNote.deleteOne();
 
 		res.status(200).json({
@@ -63,7 +62,7 @@ exports.deleteNote = async (req, res, next) => {
 			note: deletedNote.title,
 		});
 	} catch (error) {
-		console.error("DELETE ERROR: ", error);
+		//console.error("DELETE ERROR: ", error);
 		next(error);
 	}
 };
@@ -71,7 +70,7 @@ exports.deleteNote = async (req, res, next) => {
 //Search for a note by title
 exports.searchNoteByTitle = async (req, res, next) => {
 	try {
-		const searchedNote = req.note; //stored in middleware
+		const searchedNote = req.note;
 
 		res
 			.status(200)

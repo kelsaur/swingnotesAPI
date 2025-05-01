@@ -14,7 +14,8 @@ exports.validateLogin = async (req, res, next) => {
 
 	try {
 		//is username provided ? if yes -> look for username, if no -> look for email
-		const user = await User.findOne(username ? { username } : { email });
+		const logInUser = username ? { username } : { email };
+		const user = await User.findOne(logInUser);
 
 		if (!user) {
 			const error = new Error("Invalid username or email!");
@@ -34,7 +35,7 @@ exports.validateLogin = async (req, res, next) => {
 
 		next();
 	} catch (error) {
-		console.error("Login error: ", error);
+		//console.error("Login error: ", error);
 		error.statusCode = 500;
 		next(error);
 

@@ -9,14 +9,22 @@ exports.verifyToken = (req, res, next) => {
 		return next(error);
 	}
 
-	const token = authHeader.split(" ")[1];
+	let token;
+
+	if (authHeader && authHeader.startsWith("Bearer ")) {
+		token = authHeader.slice(7);
+	} else {
+		const error = new Error("Authorization header format invalid!");
+		error.statusCode = 400;
+		return next(error);
+	}
 
 	try {
 		//check if token is signed using the correct JWT key, has it expired?
-		const decoded = jwt.verify(token, process.env.JWT_SECRET);
+		const payload = jwt.verify(token, process.env.JWT_SECRET);
 
 		//attach user's ID (from logIn controller) to the request, so the notes controller knows who is making the request
-		req.userId = decoded.userId;
+		req.userId = payload.userId;
 
 		next();
 	} catch (err) {
