@@ -9,7 +9,7 @@ const noteSchema = new mongoose.Schema(
 		},
 		text: {
 			type: String,
-			required: [true, "The note must have content"],
+			required: [true, "The note must include text"],
 			maxlength: [300, `Text can't be more than 300 characters`],
 		},
 		user: {

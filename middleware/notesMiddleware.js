@@ -25,7 +25,7 @@ exports.validateUpdateNote = (req, res, next) => {
 		(title && typeof title !== "string") ||
 		(text && typeof text !== "string")
 	) {
-		const error = new Error("Title and/or content must be of type string!");
+		const error = new Error("Title and/or text must be of type string!");
 		error.statusCode = 400;
 		return next(error);
 	}
