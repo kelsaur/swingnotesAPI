@@ -1,14 +1,13 @@
 const express = require("express");
 const app = express();
-const bcrypt = require("bcryptjs");
 const userRoutes = require("./routes/userRoutes");
 const noteRoutes = require("./routes/noteRoutes");
-const errorHandler = require("./middleware/errorHandler");
+const { errorHandler } = require("./middleware/errorHandler");
 
 app.use(express.json());
 
 app.get("/", (req, res) => {
-	res.send("API is running...");
+	res.send("API is running!");
 });
 
 //Routes

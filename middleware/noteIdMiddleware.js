@@ -21,7 +21,7 @@ exports.validateNoteId = async (req, res, next) => {
 	//note.user is ObjectId -> convert to string
 	//userId from verifyToken
 	//only owner of note can update/delete - needs same token
-	if (note.user.toString() !== req.userId) {
+	if (note.user.toString() !== req.currentUser) {
 		const error = new Error("This is not your note!");
 		error.statusCode = 401;
 		return next(error);

@@ -23,9 +23,9 @@ exports.validateLogin = async (req, res, next) => {
 			return next(error);
 		}
 
-		const isMatch = await bcrypt.compare(password, user.password);
+		const passwordMatch = await bcrypt.compare(password, user.password);
 
-		if (!isMatch) {
+		if (!passwordMatch) {
 			const error = new Error("Invalid password!");
 			error.statusCode = 400;
 			return next(error);

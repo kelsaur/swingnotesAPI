@@ -74,7 +74,11 @@ exports.searchNoteByTitle = async (req, res, next) => {
 
 		res
 			.status(200)
-			.json({ title: searchedNote.title, content: searchedNote.text });
+			.json({
+				success: true,
+				title: searchedNote.title,
+				content: searchedNote.text,
+			});
 	} catch (error) {
 		next(error);
 	}

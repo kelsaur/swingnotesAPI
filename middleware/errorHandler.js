@@ -1,5 +1,5 @@
-module.exports = (err, req, res, next) => {
-	//mongoose validation error - from schema. responds with 400
+exports.errorHandler = (err, req, res, next) => {
+	//mongoose validation error
 	if (err.name === "ValidationError") {
 		return res.status(400).json({
 			success: false,

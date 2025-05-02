@@ -21,6 +21,6 @@ router
 	.put(verifyToken, validateNoteId, validateUpdateNote, updateNote)
 	.delete(verifyToken, validateNoteId, deleteNote);
 
-router.route("/search").post(verifyToken, validateNoteTitle, searchNoteByTitle);
+router.post("/search", verifyToken, validateNoteTitle, searchNoteByTitle);
 
 module.exports = router;

@@ -8,10 +8,10 @@ const {
 const { validateRegister } = require("../middleware/validateRegister");
 const { validateLogin } = require("../middleware/validateLogin");
 
-router.route("/").get(allUsers);
+router.get("/", allUsers);
 
-router.route("/register").post(validateRegister, registerUser);
+router.post("/register", validateRegister, registerUser);
 
-router.route("/login").post(validateLogin, logIn);
+router.post("/login", validateLogin, logIn);
 
 module.exports = router;

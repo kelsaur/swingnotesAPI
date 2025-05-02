@@ -4,17 +4,18 @@ const userSchema = new mongoose.Schema(
 	{
 		username: {
 			type: String,
-			required: true,
+			required: [true, "You need to choose a username!"],
 			unique: true,
 		},
 		email: {
 			type: String,
-			required: true,
+			required: [true, "You need to provide your email!"],
 			unique: true,
+			match: [/^\S+@\S+\.\S+$/, "Email address not valid!"],
 		},
 		password: {
 			type: String,
-			required: true,
+			required: [true, "You need to choose a password!"],
 			minlength: [8, "Password needs to be at least 8 digits!"],
 		},
 	},
