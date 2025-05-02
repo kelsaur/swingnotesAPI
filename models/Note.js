@@ -10,7 +10,7 @@ const noteSchema = new mongoose.Schema(
 		text: {
 			type: String,
 			required: [true, "The note must have content"],
-			maxlength: [300, `Content can't be more than 300 characters`],
+			maxlength: [300, `Text can't be more than 300 characters`],
 		},
 		user: {
 			//store users mongoDB _id inside each note -> .populate()
