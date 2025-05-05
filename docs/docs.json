@@ -365,7 +365,7 @@
 					}
 				},
 				"responses": {
-					"200": {
+					"201": {
 						"description": "Add new note as authenticated user",
 						"content": {
 							"application/json": {
