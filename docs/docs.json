@@ -1,0 +1,732 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"description": "API to save, edit & retrieve your notes",
+		"title": "Notes API",
+		"version": "1.0.0"
+	},
+	"components": {
+		"securitySchemes": {
+			"bearerAuth": {
+				"type": "http",
+				"scheme": "Bearer",
+				"bearerFormat": "JWT"
+			}
+		},
+		"schemas": {
+			"User": {
+				"type": "object",
+				"properties": {
+					"_id": {
+						"type": "string",
+						"example": "6818d4660d4704d8d8cc9ecf"
+					},
+					"username": {
+						"type": "string",
+						"example": "username1"
+					},
+					"email": {
+						"type": "string",
+						"example": "user1@gmail.com"
+					},
+					"password": {
+						"type": "string",
+						"example": "mypassword123"
+					},
+					"createdAt": {
+						"type": "string",
+						"example": "2025-05-05T07:10:24.465Z"
+					},
+					"updatedAt": {
+						"type": "string",
+						"example": "2025-05-05T07:10:24.465Z"
+					},
+					"__v": {
+						"type": "integer",
+						"example": 0
+					}
+				}
+			},
+			"Note": {
+				"type": "object",
+				"properties": {
+					"_id": { "type": "string", "example": "6818795c1cb146dfabc0a552" },
+					"title": {
+						"type": "string",
+						"example": "Final touches on Notes API"
+					},
+					"text": {
+						"type": "string",
+						"example": "Need to finish swagger documentation by monday!"
+					},
+					"user": {
+						"type": "string",
+						"format": "uuid",
+						"example": "6811c70484743681a20ca463"
+					},
+					"createdAt": {
+						"type": "string",
+						"example": "2025-05-05T08:39:56.384Z"
+					},
+					"updatedAt": {
+						"type": "string",
+						"example": "2025-05-05T08:39:56.384Z"
+					},
+					"__v": {
+						"type": "integer",
+						"example": 0
+					}
+				},
+				"required": ["title", "text"]
+			},
+			"ValidationError": {
+				"type": "object",
+				"properties": {
+					"success": { "type": "boolean", "example": false },
+					"message": { "type": "string" }
+				}
+			},
+			"ServerError": {
+				"type": "object",
+				"properties": {
+					"success": { "type": "boolean", "example": false },
+					"message": { "type": "string", "example": "Server error!" }
+				}
+			}
+		}
+	},
+
+	"paths": {
+		"/swingnotes/auth/register": {
+			"post": {
+				"description": "Register a new user",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"username": {
+										"type": "string",
+										"example": "user1"
+									},
+									"email": {
+										"type": "string",
+										"example": "user1@gmail.com"
+									},
+									"password": {
+										"type": "string",
+										"example": "mypassword123"
+									}
+								},
+								"required": ["username", "email", "password"]
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "User registered successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"success": {
+											"type": "boolean",
+											"example": true
+										},
+										"message": {
+											"type": "string",
+											"example": "User registered successfully!"
+										},
+										"newUser": {
+											"$ref": "#/components/schemas/User"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Username or email already in use",
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{ "$ref": "#/components/schemas/ValidationError" },
+										{
+											"example": {
+												"success": false,
+												"message": "Email already registered!"
+											}
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ServerError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/swingnotes/auth/login": {
+			"post": {
+				"description": "Log in",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"oneOf": [
+									{
+										"type": "object",
+										"required": ["username", "password"],
+										"properties": {
+											"username": { "type": "string", "example": "username1" },
+											"password": {
+												"type": "string",
+												"example": "mypassword123"
+											}
+										}
+									},
+									{
+										"type": "object",
+										"required": ["email", "password"],
+										"properties": {
+											"email": {
+												"type": "string",
+												"example": "user1@gmail.com"
+											},
+											"password": {
+												"type": "string",
+												"example": "mypassword123"
+											}
+										}
+									}
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Login successful",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"success": {
+											"type": "boolean",
+											"example": "true"
+										},
+										"message": {
+											"type": "string",
+											"example": "Log in successful! Welcome user1!"
+										},
+										"token": {
+											"type": "string",
+											"example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODE0YjgzZTI4OGNhZmE3NTk3MDZhM2YiLCJpYXQiOjE3NDY0Mjg1OTEsImV4cCI6MTc0NjQ0NjU5MX0.wlHlsuyfg4jwyeoXJU-6kUEBivgJE4v5_5zaw835gvk"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Log in validation error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{ "$ref": "#/components/schemas/ValidationError" },
+										{
+											"example": {
+												"success": false,
+												"message": "Invalid password!"
+											}
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ServerError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/swingnotes/notes": {
+			"get": {
+				"description": "Get a list of notes the logged-in user has created",
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Returns all notes the authenticated user has created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"success": {
+											"type": "boolean",
+											"example": "true"
+										},
+										"notes": {
+											"type": "array",
+											"items": {
+												"$ref": "#/components/schemas/Note"
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Token verification error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{ "$ref": "#/components/schemas/ValidationError" },
+										{
+											"example": {
+												"success": false,
+												"message": "Invalid or expired token!"
+											}
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ServerError"
+								}
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"description": "Add a new note",
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"required": ["title", "text"],
+								"properties": {
+									"title": {
+										"type": "string",
+										"example": "Final touches on Notes API"
+									},
+									"text": {
+										"type": "string",
+										"example": "Need to finish swagger documentation by monday!"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Add new note as authenticated user",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"success": {
+											"type": "boolean",
+											"example": "true"
+										},
+										"newNote": {
+											"$ref": "#/components/schemas/Note"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Token verification error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{ "$ref": "#/components/schemas/ValidationError" },
+										{
+											"example": {
+												"success": false,
+												"message": "Invalid or expired token!"
+											}
+										}
+									]
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ServerError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/swingnotes/notes/{noteId}": {
+			"put": {
+				"description": "Update a note a logged-in user has created (by ID). Either title or text(or both) must be provided",
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"name": "noteId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"example": "6818795c1cb146dfabc0a552"
+						},
+						"description": "ID of the note to update"
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"title": {
+										"type": "string",
+										"example": "Updated note title"
+									},
+									"text": {
+										"type": "string",
+										"example": "Updated note content"
+									}
+								},
+								"anyOf": [{ "required": ["title"] }, { "required": ["text"] }]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Returns the updated note",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"success": {
+											"type": "boolean",
+											"example": "true"
+										},
+										"updatedNote": {
+											"$ref": "#/components/schemas/Note"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ValidationError"
+								},
+								"examples": {
+									"MissingFields": {
+										"summary": "Missing both fields",
+										"value": {
+											"success": false,
+											"message": "You must provide at least 'title' or 'text' to update."
+										}
+									},
+									"InvalidTypes": {
+										"summary": "Invalid type",
+										"value": {
+											"success": false,
+											"message": "Title and/or text must be of type string!"
+										}
+									},
+									"InvalidToken": {
+										"summary": "Invalid or expired token",
+										"value": {
+											"success": false,
+											"message": "Invalid or expired token!"
+										}
+									},
+									"InvalidID": {
+										"summary": "Malformed ObjectId",
+										"value": {
+											"success": false,
+											"message": "Invalid ID format: 123!"
+										}
+									},
+									"NoteNotFound": {
+										"summary": "Note does not exist",
+										"value": {
+											"success": false,
+											"message": "Note with id 6818795f1cb146dfabc0a588 doesn't exist!"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ServerError"
+								}
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"description": "Delete a note (by ID) a logged-in user has saved",
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"name": "noteId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"example": "6818795c1cb146dfabc0a552"
+						},
+						"description": "ID of the note to delete"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Returns the deleted note title",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"success": {
+											"type": "boolean",
+											"example": "true"
+										},
+										"message": {
+											"type": "string",
+											"example": "Item deleted successfully!"
+										},
+										"note": {
+											"type": "string",
+											"example": "Note number 1"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ValidationError"
+								},
+								"examples": {
+									"InvalidToken": {
+										"summary": "Invalid or expired token",
+										"value": {
+											"success": false,
+											"message": "Invalid or expired token!"
+										}
+									},
+									"InvalidID": {
+										"summary": "Malformed ObjectId",
+										"value": {
+											"success": false,
+											"message": "Invalid ID format: 123!"
+										}
+									},
+									"NoteNotFound": {
+										"summary": "Note does not exist",
+										"value": {
+											"success": false,
+											"message": "Note with id 6818795f1cb146dfabc0a588 doesn't exist!"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"500": {
+					"description": "Server error",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ServerError"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/swingnotes/notes/search": {
+			"post": {
+				"description": "Search a note by title among the authenticated user's notes",
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"title": {
+										"type": "string",
+										"example": "Final touches Notes API"
+									}
+								},
+								"required": ["title"]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Returns the note that matches the title",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"success": {
+											"type": "boolean",
+											"example": true
+										},
+										"title": {
+											"type": "string",
+											"example": "Final touches Notes API"
+										},
+										"text": {
+											"type": "string",
+											"example": "Need to finish swagger documentation by monday!"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ValidationError"
+								},
+								"examples": {
+									"MissingTitle": {
+										"summary": "Missing title in request",
+										"value": {
+											"success": false,
+											"message": "You must write a title you want to search for!"
+										}
+									},
+									"InvalidToken": {
+										"summary": "Missing or invalid token",
+										"value": {
+											"success": false,
+											"message": "Invalid or expired token!"
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Note not found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ValidationError"
+								},
+								"example": {
+									"success": false,
+									"message": "No such title exists!"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ServerError"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

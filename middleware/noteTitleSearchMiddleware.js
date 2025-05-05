@@ -7,10 +7,6 @@ exports.validateNoteTitle = async (req, res, next) => {
 		const error = new Error("You must write a title you want to search for!");
 		error.statusCode = 400;
 		return next(error);
-
-		return res
-			.status(400)
-			.json({ message: "You must write a title you want to search for!" });
 	}
 
 	try {

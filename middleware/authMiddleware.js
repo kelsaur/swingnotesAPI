@@ -29,7 +29,7 @@ exports.verifyToken = (req, res, next) => {
 		next();
 	} catch (err) {
 		const error = new Error("Invalid or expired token!");
-		error.statusCode = 400;
+		error.statusCode = 401;
 		next(error);
 	}
 };

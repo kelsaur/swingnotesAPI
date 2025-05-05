@@ -14,13 +14,15 @@ const {
 } = require("../middleware/noteTitleSearchMiddleware");
 const { verifyToken } = require("../middleware/authMiddleware");
 
-router.route("/").get(verifyToken, getNotes).post(verifyToken, addNote);
+router.use(verifyToken);
+
+router.route("/").get(getNotes).post(addNote);
 
 router
 	.route("/:noteId")
-	.put(verifyToken, validateNoteId, validateUpdateNote, updateNote)
-	.delete(verifyToken, validateNoteId, deleteNote);
+	.put(validateNoteId, validateUpdateNote, updateNote)
+	.delete(validateNoteId, deleteNote);
 
-router.post("/search", verifyToken, validateNoteTitle, searchNoteByTitle);
+router.post("/search", validateNoteTitle, searchNoteByTitle);
 
 module.exports = router;

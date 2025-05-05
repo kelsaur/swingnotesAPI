@@ -21,9 +21,17 @@
 exports.validateUpdateNote = (req, res, next) => {
 	const { title, text } = req.body;
 
+	if (title === undefined && text === undefined) {
+		const error = new Error(
+			"You must provide at least 'title' or 'text' to update."
+		);
+		error.statusCode = 400;
+		return next(error);
+	}
+
 	if (
-		(title && typeof title !== "string") ||
-		(text && typeof text !== "string")
+		(title !== undefined && typeof title !== "string") ||
+		(text !== undefined && typeof text !== "string")
 	) {
 		const error = new Error("Title and/or text must be of type string!");
 		error.statusCode = 400;
